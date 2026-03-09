@@ -99,7 +99,6 @@ export function ProfileModal({
                     src={profile.avatarUrl}
                     alt={profile.name}
                     className="size-full object-cover"
-                    crossOrigin="anonymous"
                   />
                 ) : (
                   <div
