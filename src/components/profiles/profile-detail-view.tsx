@@ -86,41 +86,56 @@ export function ProfileDetailView({
       {(profile.github || profile.portfolio || profile.linkedin) && (
         <div className="space-y-2">
           <h2 className="text-sm font-medium text-text-strong">링크</h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-2">
             {profile.github && (
               <a
-                href={profile.github}
+                href={profile.github.startsWith("http") ? profile.github : `https://github.com/${profile.github}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
+                className="flex items-center gap-3 rounded-lg border border-[#24292e]/15 bg-[#24292e] px-4 py-3 text-white transition-opacity hover:opacity-90"
               >
-                <Github className="size-4" />
-                GitHub
-                <ExternalLink className="size-3 text-text-subtle" />
-              </a>
-            )}
-            {profile.portfolio && (
-              <a
-                href={profile.portfolio}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
-              >
-                <Globe className="size-4" />
-                포트폴리오
-                <ExternalLink className="size-3 text-text-subtle" />
+                <Github className="size-5 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">GitHub</p>
+                  <p className="truncate text-xs text-white/70">
+                    {profile.github.replace(/^https?:\/\/(www\.)?github\.com\/?/, "")}
+                  </p>
+                </div>
+                <ExternalLink className="size-3.5 shrink-0 text-white/50" />
               </a>
             )}
             {profile.linkedin && (
               <a
-                href={profile.linkedin}
+                href={profile.linkedin.startsWith("http") ? profile.linkedin : `https://linkedin.com/in/${profile.linkedin}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
+                className="flex items-center gap-3 rounded-lg border border-[#0A66C2]/15 bg-[#0A66C2] px-4 py-3 text-white transition-opacity hover:opacity-90"
               >
-                <Linkedin className="size-4" />
-                LinkedIn
-                <ExternalLink className="size-3 text-text-subtle" />
+                <Linkedin className="size-5 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium">LinkedIn</p>
+                  <p className="truncate text-xs text-white/70">
+                    {profile.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\/?/, "")}
+                  </p>
+                </div>
+                <ExternalLink className="size-3.5 shrink-0 text-white/50" />
+              </a>
+            )}
+            {profile.portfolio && (
+              <a
+                href={profile.portfolio.startsWith("http") ? profile.portfolio : `https://${profile.portfolio}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-lg border border-foreground/10 bg-muted px-4 py-3 transition-colors hover:bg-muted/80"
+              >
+                <Globe className="size-5 shrink-0 text-text-muted" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-text-strong">포트폴리오</p>
+                  <p className="truncate text-xs text-text-muted">
+                    {profile.portfolio.replace(/^https?:\/\/(www\.)?/, "")}
+                  </p>
+                </div>
+                <ExternalLink className="size-3.5 shrink-0 text-text-subtle" />
               </a>
             )}
           </div>
