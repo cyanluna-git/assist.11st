@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
 
   const sp = req.nextUrl.searchParams;
   const unreadOnly = sp.get("unread") === "true";
-  const limit = Math.min(Number(sp.get("limit")) || 30, 100);
+  const rawLimit = sp.get("limit");
+  const limit = rawLimit !== null ? Math.min(Math.max(Number(rawLimit), 0), 100) : 30;
   const offset = Number(sp.get("offset")) || 0;
 
   const conditions = [eq(notifications.userId, session.sub)];

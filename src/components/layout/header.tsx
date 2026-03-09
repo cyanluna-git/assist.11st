@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 interface HeaderProps {
   user: { id: string; name: string; email: string; role: string };
@@ -26,6 +27,7 @@ export function Header({ user }: HeaderProps) {
         </h2>
       </div>
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <Link
           href={`/profiles/${user.id}`}
           className="hidden items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-canvas sm:flex"
