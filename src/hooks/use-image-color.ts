@@ -33,7 +33,11 @@ export function useImageColor(imageUrl: string | null | undefined): ImageColors 
     const fac = new FastAverageColor();
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = imageUrl;
+    // Proxy external URLs to avoid CORS issues with R2 public URLs
+    const proxyUrl = imageUrl.startsWith("http")
+      ? `/api/image-proxy?url=${encodeURIComponent(imageUrl)}`
+      : imageUrl;
+    img.src = proxyUrl;
 
     let cancelled = false;
 
