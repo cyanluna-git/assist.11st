@@ -188,6 +188,9 @@ export const albums = pgTable("albums", {
   title: text("title").notNull(),
   description: text("description"),
   coverImageUrl: text("cover_image_url"),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -206,6 +209,7 @@ export const photos = pgTable("photos", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   imageUrl: text("image_url").notNull(),
+  thumbnailUrl: text("thumbnail_url").notNull(),
   caption: text("caption"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

@@ -1,22 +1,13 @@
 import { NextResponse } from "next/server";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSession } from "@/lib/auth";
+import {
+  getR2Client,
+  getBucketName,
+  generateKey,
+  uploadToR2,
+} from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
-
-function getR2Client() {
-  const accountId = process.env.R2_ACCOUNT_ID;
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-
-  if (!accountId || !accessKeyId || !secretAccessKey) return null;
-
-  return new S3Client({
-    region: "auto",
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId, secretAccessKey },
-  });
-}
 
 export async function POST(req: Request) {
   const session = await getSession();
@@ -33,7 +24,10 @@ export async function POST(req: Request) {
 
   const maxSize = 5 * 1024 * 1024; // 5MB
   if (file.size > maxSize) {
-    return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 400 });
+    return NextResponse.json(
+      { error: "File too large (max 5MB)" },
+      { status: 400 },
+    );
   }
 
   const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -41,9 +35,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
   }
 
-  const bucketName = process.env.R2_BUCKET_NAME;
-  const publicUrl = process.env.R2_PUBLIC_URL;
   const client = getR2Client();
+  const bucketName = getBucketName();
 
   if (!client || !bucketName) {
     return NextResponse.json({
@@ -54,20 +47,10 @@ export async function POST(req: Request) {
 
   try {
     const ext = file.name.split(".").pop() || "jpg";
-    const key = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
+    const key = generateKey("uploads", ext);
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    await client.send(
-      new PutObjectCommand({
-        Bucket: bucketName,
-        Key: key,
-        Body: buffer,
-        ContentType: file.type,
-      }),
-    );
-
-    const fileUrl = publicUrl ? `${publicUrl}/${key}` : key;
+    const fileUrl = await uploadToR2(key, buffer, file.type);
 
     return NextResponse.json({ url: fileUrl });
   } catch (err) {
