@@ -24,8 +24,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 const navItems = [
   { href: "/", label: "홈", icon: Home },
   { href: "/posts", label: "게시판", icon: MessageSquare },
-  { href: "/profiles", label: "프로필", icon: Users },
-  { href: "/directory", label: "원우 카드", icon: ContactRound },
+  { href: "/directory", label: "프로필", icon: ContactRound },
   { href: "/events", label: "일정", icon: Calendar },
   { href: "/gallery", label: "갤러리", icon: Image },
   { href: "/thesis", label: "논문", icon: BookOpen },
