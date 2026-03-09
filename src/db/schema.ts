@@ -6,6 +6,7 @@ import {
   integer,
   boolean,
   timestamp,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 // ────────────────────────────────────────────────────────
@@ -51,6 +52,10 @@ export const users = pgTable("users", {
   industry: text("industry"),
   interests: text("interests"),
   bio: text("bio"),
+  github: text("github"),
+  portfolio: text("portfolio"),
+  linkedin: text("linkedin"),
+  careers: jsonb("careers"),
   avatarUrl: text("avatar_url"),
   role: userRoleEnum("role").notNull().default("member"),
   createdAt: timestamp("created_at", { withTimezone: true })

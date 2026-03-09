@@ -26,6 +26,10 @@ export async function GET(req: NextRequest) {
       industry: users.industry,
       interests: users.interests,
       bio: users.bio,
+      github: users.github,
+      portfolio: users.portfolio,
+      linkedin: users.linkedin,
+      careers: users.careers,
       avatarUrl: users.avatarUrl,
       role: users.role,
     })

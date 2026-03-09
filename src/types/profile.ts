@@ -1,3 +1,11 @@
+export interface CareerEntry {
+  company: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  current: boolean;
+}
+
 export interface Profile {
   id: string;
   name: string;
@@ -8,6 +16,10 @@ export interface Profile {
   industry: string | null;
   interests: string | null;
   bio: string | null;
+  github: string | null;
+  portfolio: string | null;
+  linkedin: string | null;
+  careers: CareerEntry[] | null;
   avatarUrl: string | null;
   role: "admin" | "member" | "professor";
 }
@@ -24,4 +36,8 @@ export interface ProfileUpdatePayload {
   interests?: string;
   bio?: string;
   avatarUrl?: string;
+  github?: string;
+  portfolio?: string;
+  linkedin?: string;
+  careers?: CareerEntry[];
 }

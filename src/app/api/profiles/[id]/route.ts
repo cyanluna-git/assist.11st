@@ -29,6 +29,10 @@ export async function GET(
       industry: users.industry,
       interests: users.interests,
       bio: users.bio,
+      github: users.github,
+      portfolio: users.portfolio,
+      linkedin: users.linkedin,
+      careers: users.careers,
       avatarUrl: users.avatarUrl,
       role: users.role,
       createdAt: users.createdAt,
@@ -60,13 +64,17 @@ export async function PATCH(
   }
 
   const body = await req.json();
-  const allowedFields = ["phone", "company", "position", "industry", "interests", "bio", "avatarUrl"] as const;
-  const updates: Record<string, string> = {};
+  const allowedFields = ["phone", "company", "position", "industry", "interests", "bio", "avatarUrl", "github", "portfolio", "linkedin", "careers"] as const;
+  const updates: Record<string, unknown> = {};
 
   for (const field of allowedFields) {
     if (body[field] !== undefined) {
       updates[field] = body[field];
     }
+  }
+
+  if (updates.careers !== undefined && !Array.isArray(updates.careers)) {
+    return NextResponse.json({ error: "careers must be an array" }, { status: 400 });
   }
 
   if (Object.keys(updates).length === 0) {

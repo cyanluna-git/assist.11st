@@ -3,8 +3,8 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, Building2, Briefcase, Tag, Heart, Pencil } from "lucide-react";
-import type { ProfileDetail } from "@/types/profile";
+import { Mail, Phone, Building2, Briefcase, Tag, Heart, Pencil, Github, Linkedin, Globe, ExternalLink } from "lucide-react";
+import type { ProfileDetail, CareerEntry } from "@/types/profile";
 
 function InfoRow({
   icon: Icon,
@@ -79,6 +79,74 @@ export function ProfileDetailView({
           <p className="whitespace-pre-wrap rounded-lg bg-muted p-4 text-sm text-text-main">
             {profile.bio}
           </p>
+        </div>
+      )}
+
+      {/* Links */}
+      {(profile.github || profile.portfolio || profile.linkedin) && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-text-strong">링크</h2>
+          <div className="flex flex-wrap gap-3">
+            {profile.github && (
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
+              >
+                <Github className="size-4" />
+                GitHub
+                <ExternalLink className="size-3 text-text-subtle" />
+              </a>
+            )}
+            {profile.portfolio && (
+              <a
+                href={profile.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
+              >
+                <Globe className="size-4" />
+                포트폴리오
+                <ExternalLink className="size-3 text-text-subtle" />
+              </a>
+            )}
+            {profile.linkedin && (
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-muted px-3 py-2 text-sm text-text-main transition-colors hover:text-text-strong"
+              >
+                <Linkedin className="size-4" />
+                LinkedIn
+                <ExternalLink className="size-3 text-text-subtle" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Careers */}
+      {profile.careers && profile.careers.length > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-text-strong">경력</h2>
+          <div className="space-y-3">
+            {(profile.careers as CareerEntry[]).map((career, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg bg-muted p-4"
+              >
+                <p className="text-sm font-medium text-text-strong">
+                  {career.company}
+                </p>
+                <p className="text-sm text-text-main">{career.position}</p>
+                <p className="mt-1 text-xs text-text-subtle">
+                  {career.startDate} ~ {career.current ? "현재" : career.endDate}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
