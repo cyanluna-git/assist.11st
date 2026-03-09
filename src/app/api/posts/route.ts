@@ -35,6 +35,7 @@ export async function GET(req: NextRequest) {
       authorName: users.name,
       authorAvatar: users.avatarUrl,
       reactionCount: sql<number>`(SELECT COUNT(*) FROM reactions WHERE reactions.post_id = ${posts.id})`,
+      commentCount: sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.post_id = ${posts.id})`,
     })
     .from(posts)
     .leftJoin(users, eq(posts.authorId, users.id))
@@ -56,6 +57,14 @@ export async function POST(req: Request) {
 
   if (!title || !content || !boardType) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
+
+  if (typeof title !== "string" || typeof content !== "string" || title.length > 200 || content.length > 50000) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+
+  if (!validBoardTypes.includes(boardType as BoardType)) {
+    return NextResponse.json({ error: "Invalid board type" }, { status: 400 });
   }
 
   if (boardType === "notice" && session.role !== "admin") {

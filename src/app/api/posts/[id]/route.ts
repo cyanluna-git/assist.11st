@@ -30,6 +30,8 @@ export async function GET(
       authorName: users.name,
       authorAvatar: users.avatarUrl,
       reactionCount: sql<number>`(SELECT COUNT(*) FROM reactions WHERE reactions.post_id = ${posts.id})`,
+      commentCount: sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.post_id = ${posts.id})`,
+      userHasLiked: sql<boolean>`EXISTS (SELECT 1 FROM reactions WHERE reactions.post_id = ${posts.id} AND reactions.user_id = ${session.sub})`,
     })
     .from(posts)
     .leftJoin(users, eq(posts.authorId, users.id))
@@ -69,6 +71,11 @@ export async function PATCH(
   }
 
   const { title, content } = await req.json();
+
+  if (typeof title !== "string" || typeof content !== "string" || title.length > 200 || content.length > 50000) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+
   await db
     .update(posts)
     .set({ title, content, updatedAt: new Date() })
