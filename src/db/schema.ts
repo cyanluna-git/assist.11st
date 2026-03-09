@@ -135,16 +135,63 @@ export const bookmarks = pgTable("bookmarks", {
 });
 
 // ────────────────────────────────────────────────────────
-// 6. rss_items
+// 6. news_sources
 // ────────────────────────────────────────────────────────
 
-export const rssItems = pgTable("rss_items", {
+export const newsSources = pgTable("news_sources", {
   id: uuid("id").defaultRandom().primaryKey(),
-  source: text("source").notNull(),
+  name: text("name").notNull(),
+  feedUrl: text("feed_url").notNull().unique(),
+  category: text("category"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ────────────────────────────────────────────────────────
+// 6-1. news_articles
+// ────────────────────────────────────────────────────────
+
+export const newsArticles = pgTable("news_articles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  sourceId: uuid("source_id").references(() => newsSources.id, {
+    onDelete: "set null",
+  }),
   title: text("title").notNull(),
   summary: text("summary"),
-  url: text("url").notNull(),
+  url: text("url").notNull().unique(),
+  imageUrl: text("image_url"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
+  sharedById: uuid("shared_by_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  isManual: boolean("is_manual").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ────────────────────────────────────────────────────────
+// 6-2. news_comments
+// ────────────────────────────────────────────────────────
+
+export const newsComments = pgTable("news_comments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  articleId: uuid("article_id")
+    .notNull()
+    .references(() => newsArticles.id, { onDelete: "cascade" }),
+  authorId: uuid("author_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id"),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 // ────────────────────────────────────────────────────────
@@ -161,24 +208,42 @@ export const thesis = pgTable("thesis", {
   field: text("field"),
   status: thesisStatusEnum("status").notNull().default("draft"),
   fileUrl: text("file_url"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 // ────────────────────────────────────────────────────────
 // 8. thesis_reviews
 // ────────────────────────────────────────────────────────
 
-export const thesisReviews = pgTable("thesis_reviews", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  thesisId: uuid("thesis_id")
-    .notNull()
-    .references(() => thesis.id, { onDelete: "cascade" }),
-  reviewerId: uuid("reviewer_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  rating: integer("rating"),
-  feedback: text("feedback"),
-  isAnonymous: boolean("is_anonymous").notNull().default(false),
-});
+export const thesisReviews = pgTable(
+  "thesis_reviews",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    thesisId: uuid("thesis_id")
+      .notNull()
+      .references(() => thesis.id, { onDelete: "cascade" }),
+    reviewerId: uuid("reviewer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rating: integer("rating"),
+    feedback: text("feedback"),
+    isAnonymous: boolean("is_anonymous").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    unique("thesis_reviews_thesis_reviewer_unique").on(
+      t.thesisId,
+      t.reviewerId,
+    ),
+  ],
+);
 
 // ────────────────────────────────────────────────────────
 // 9. albums
