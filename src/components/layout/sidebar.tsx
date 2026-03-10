@@ -12,6 +12,7 @@ import {
   BookOpen,
   Newspaper,
   BarChart3,
+  Bookmark,
   Settings,
   Shield,
   PanelLeftClose,
@@ -30,6 +31,7 @@ const navItems = [
   { href: "/thesis", label: "논문", icon: BookOpen },
   { href: "/news", label: "IT 소식", icon: Newspaper },
   { href: "/polls", label: "투표", icon: BarChart3 },
+  { href: "/scraps", label: "스크랩", icon: Bookmark },
 ];
 
 export function Sidebar() {

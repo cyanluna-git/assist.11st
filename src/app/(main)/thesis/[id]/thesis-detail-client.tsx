@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StarRating } from "@/components/thesis/star-rating";
 import { ThesisFileUpload } from "@/components/thesis/thesis-file-upload";
 import { ReviewList } from "@/components/thesis/review-list";
+import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
 import { useThesis, useDeleteThesis } from "@/hooks/use-theses";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { formatDate } from "@/lib/format-date";
@@ -106,6 +107,7 @@ export function ThesisDetailClient() {
               )}
             </div>
           </div>
+          <BookmarkButton targetType="thesis" targetId={id} className="shrink-0" />
         </div>
 
         <div className="flex items-center gap-2 text-xs text-text-muted">

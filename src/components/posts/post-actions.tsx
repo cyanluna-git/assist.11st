@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Heart, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
 import { useToggleReaction, useDeletePost } from "@/hooks/use-posts";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,8 @@ export function PostActions({
         />
         {Number(reactionCount) || 0}
       </Button>
+
+      <BookmarkButton targetType="post" targetId={postId} />
 
       {canEdit && (
         <>

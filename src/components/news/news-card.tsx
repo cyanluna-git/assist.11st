@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ExternalLink, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
 import { formatDate } from "@/lib/format-date";
 import { NewsCommentSection } from "@/components/news/news-comment-section";
 import type { NewsArticle } from "@/types/news";
@@ -49,7 +50,7 @@ export function NewsCard({ article, currentUserId }: NewsCardProps) {
         )}
 
         {/* Actions */}
-        <div className="mt-3 flex items-center">
+        <div className="mt-3 flex items-center gap-2">
           <button
             type="button"
             onClick={() => setShowComments(!showComments)}
@@ -58,6 +59,9 @@ export function NewsCard({ article, currentUserId }: NewsCardProps) {
             <MessageCircle className="size-3.5" />
             <span>댓글 {article.commentCount > 0 ? `(${article.commentCount})` : ""}</span>
           </button>
+          {currentUserId && (
+            <BookmarkButton targetType="news" targetId={article.id} />
+          )}
         </div>
       </div>
 
