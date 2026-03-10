@@ -17,6 +17,7 @@ import {
   Shield,
   PanelLeftClose,
   PanelLeftOpen,
+  Users2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/sidebar-provider";
@@ -27,6 +28,7 @@ const navItems = [
   { href: "/posts", label: "게시판", icon: MessageSquare },
   { href: "/directory", label: "프로필", icon: ContactRound },
   { href: "/events", label: "일정", icon: Calendar },
+  { href: "/groups", label: "소모임", icon: Users2 },
   { href: "/gallery", label: "갤러리", icon: Image },
   { href: "/thesis", label: "논문", icon: BookOpen },
   { href: "/news", label: "IT 소식", icon: Newspaper },
