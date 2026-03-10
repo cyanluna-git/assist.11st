@@ -13,15 +13,17 @@ export interface ProcessedImage {
 export async function processImage(
   inputBuffer: Buffer,
 ): Promise<ProcessedImage> {
-  // Auto-rotate based on EXIF orientation, then convert to WebP
+  // Auto-rotate based on EXIF orientation, preserve metadata, then convert to WebP
   const originalBuffer = await sharp(inputBuffer)
     .rotate()
+    .withMetadata()
     .webp({ quality: 85 })
     .toBuffer();
 
-  // Generate thumbnail: auto-rotate, max 400x400 with preserved aspect ratio
+  // Generate thumbnail: auto-rotate, preserve metadata, max 400x400
   const thumbnailBuffer = await sharp(inputBuffer)
     .rotate()
+    .withMetadata()
     .resize(400, 400, {
       fit: "inside",
       withoutEnlargement: true,
