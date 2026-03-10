@@ -50,7 +50,7 @@ export async function GET(
   // Total unique voters
   const totalVoters = await db
     .select({
-      count: sql<number>`COUNT(DISTINCT pv.user_id)`,
+      count: sql<number>`COUNT(DISTINCT ${pollVotes.userId})`,
     })
     .from(pollVotes)
     .innerJoin(pollOptions, eq(pollVotes.pollOptionId, pollOptions.id))
