@@ -7,6 +7,7 @@ import { ScheduleWidget } from "@/components/dashboard/schedule-widget";
 import { PollWidget } from "@/components/dashboard/poll-widget";
 import { GalleryWidget } from "@/components/dashboard/gallery-widget";
 import { NewsWidget } from "@/components/dashboard/news-widget";
+import { ThesisWidget } from "@/components/dashboard/thesis-widget";
 import { QuickActions } from "@/components/dashboard/quick-actions";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -69,6 +70,7 @@ export function DashboardClient({ userName }: { userName: string }) {
         <ScheduleWidget />
         <PollWidget />
         <GalleryWidget />
+        <ThesisWidget />
         <NewsWidget />
       </div>
     </div>
