@@ -266,7 +266,7 @@ export function UploadPhotosDialog() {
 
         <DialogFooter>
           <DialogClose
-            render={<Button variant="outline" disabled={isPending} />}
+            render={<Button variant="ghost" disabled={isPending} />}
           >
             취소
           </DialogClose>

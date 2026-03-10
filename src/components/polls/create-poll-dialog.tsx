@@ -200,7 +200,7 @@ export function CreatePollDialog() {
           )}
 
           <DialogFooter>
-            <DialogClose render={<Button variant="outline" />}>
+            <DialogClose render={<Button variant="ghost" />}>
               취소
             </DialogClose>
             <Button

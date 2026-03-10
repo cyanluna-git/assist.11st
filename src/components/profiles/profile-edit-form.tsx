@@ -281,7 +281,7 @@ export function ProfileEditForm({
       <div className="flex justify-end gap-2">
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={onCancel}
           disabled={isSaving}
