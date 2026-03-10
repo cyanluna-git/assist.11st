@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { events, users } from "@/db/schema";
+import { events, users, groups } from "@/db/schema";
 import { getSession } from "@/lib/auth";
 import { expandRecurrence } from "@/lib/recurrence";
+import { isGroupMember } from "@/lib/groups";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
   const from = sp.get("from") ? new Date(sp.get("from")!) : defaultFrom;
   const to = sp.get("to") ? new Date(sp.get("to")!) : defaultTo;
   const category = sp.get("category") as EventCategory | null;
+  const groupId = sp.get("group_id");
   const limit = Math.min(Number(sp.get("limit")) || 50, 100);
   const offset = Number(sp.get("offset")) || 0;
 
@@ -46,6 +48,10 @@ export async function GET(req: NextRequest) {
     conditions.push(eq(events.category, category));
   }
 
+  if (groupId) {
+    conditions.push(eq(events.groupId, groupId));
+  }
+
   const rows = await db
     .select({
       id: events.id,
@@ -58,6 +64,7 @@ export async function GET(req: NextRequest) {
       isRecurring: events.isRecurring,
       recurrenceRule: events.recurrenceRule,
       creatorId: events.creatorId,
+      groupId: events.groupId,
       createdAt: events.createdAt,
       updatedAt: events.updatedAt,
       creatorName: users.name,
@@ -88,6 +95,7 @@ export async function GET(req: NextRequest) {
       isRecurring: events.isRecurring,
       recurrenceRule: events.recurrenceRule,
       creatorId: events.creatorId,
+      groupId: events.groupId,
       createdAt: events.createdAt,
       updatedAt: events.updatedAt,
       creatorName: users.name,
@@ -106,6 +114,7 @@ export async function GET(req: NextRequest) {
         ...(category && VALID_CATEGORIES.includes(category)
           ? [eq(events.category, category)]
           : []),
+        ...(groupId ? [eq(events.groupId, groupId)] : []),
       ),
     );
 
@@ -190,7 +199,7 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
-  const { title, description, location, startAt, endAt, category, isRecurring, recurrenceRule } = body;
+  const { title, description, location, startAt, endAt, category, isRecurring, recurrenceRule, group_id } = body;
 
   // Validation
   if (!title || typeof title !== "string" || title.length > 200) {
@@ -226,6 +235,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "location must be string (max 500 chars)" }, { status: 400 });
   }
 
+  // Validate group membership if group_id is provided
+  let resolvedGroupId: string | null = null;
+  if (group_id) {
+    if (typeof group_id !== "string") {
+      return NextResponse.json({ error: "group_id must be a string" }, { status: 400 });
+    }
+    // Check group exists
+    const groupExists = await db
+      .select({ id: groups.id })
+      .from(groups)
+      .where(eq(groups.id, group_id))
+      .then((rows) => rows[0] ?? null);
+
+    if (!groupExists) {
+      return NextResponse.json({ error: "Group not found" }, { status: 404 });
+    }
+
+    // Caller must be a member of the group
+    const member = await isGroupMember(group_id, session.sub);
+    if (!member && session.role !== "admin") {
+      return NextResponse.json(
+        { error: "You must be a member of the group to create an event for it" },
+        { status: 403 },
+      );
+    }
+    resolvedGroupId = group_id;
+  }
+
   // Only allow recurrenceRule if isRecurring is true
   const recurring = Boolean(isRecurring);
   const rule = recurring && recurrenceRule ? String(recurrenceRule) : null;
@@ -241,6 +278,7 @@ export async function POST(req: Request) {
       category: category || null,
       isRecurring: recurring,
       recurrenceRule: rule,
+      groupId: resolvedGroupId,
       creatorId: session.sub,
     })
     .returning();

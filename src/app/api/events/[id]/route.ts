@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { events, users, eventRsvps } from "@/db/schema";
+import { events, users, eventRsvps, groups } from "@/db/schema";
 import { getSession } from "@/lib/auth";
+import { isGroupMember } from "@/lib/groups";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,7 @@ export async function GET(
       isRecurring: events.isRecurring,
       recurrenceRule: events.recurrenceRule,
       creatorId: events.creatorId,
+      groupId: events.groupId,
       createdAt: events.createdAt,
       updatedAt: events.updatedAt,
       creatorName: users.name,
@@ -165,6 +167,36 @@ export async function PATCH(
 
   if (body.recurrenceRule !== undefined) {
     updates.recurrenceRule = body.recurrenceRule || null;
+  }
+
+  if (body.group_id !== undefined) {
+    if (body.group_id === null) {
+      updates.groupId = null;
+    } else {
+      if (typeof body.group_id !== "string") {
+        return NextResponse.json({ error: "group_id must be a string" }, { status: 400 });
+      }
+      // Check group exists
+      const groupExists = await db
+        .select({ id: groups.id })
+        .from(groups)
+        .where(eq(groups.id, body.group_id))
+        .then((rows) => rows[0] ?? null);
+
+      if (!groupExists) {
+        return NextResponse.json({ error: "Group not found" }, { status: 404 });
+      }
+
+      // Caller must be a member of the group (unless admin)
+      const member = await isGroupMember(body.group_id, session.sub);
+      if (!member && session.role !== "admin") {
+        return NextResponse.json(
+          { error: "You must be a member of the group to associate this event" },
+          { status: 403 },
+        );
+      }
+      updates.groupId = body.group_id;
+    }
   }
 
   await db

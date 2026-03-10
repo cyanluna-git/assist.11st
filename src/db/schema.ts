@@ -318,6 +318,7 @@ export const events = pgTable("events", {
   category: text("category"),
   isRecurring: boolean("is_recurring").notNull().default(false),
   recurrenceRule: text("recurrence_rule"),
+  groupId: uuid("group_id").references(() => groups.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
