@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardAction, CardContent } from "@/componen
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTheses } from "@/hooks/use-theses";
-import { FIELD_MAP, STATUS_MAP } from "@/types/thesis";
+import { FIELD_MAP } from "@/types/thesis";
 
 export function ThesisWidget() {
   const { data: theses, isLoading } = useTheses(undefined, undefined, 5, 0);
@@ -51,7 +51,6 @@ export function ThesisWidget() {
           <ul className="divide-y divide-line-subtle">
             {theses.map((thesis) => {
               const field = thesis.field ? FIELD_MAP[thesis.field] : null;
-              const status = STATUS_MAP[thesis.status];
               return (
                 <li key={thesis.id}>
                   <Link
@@ -78,11 +77,6 @@ export function ThesisWidget() {
                       </div>
                       <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
                         <span>{thesis.author.name}</span>
-                        <span
-                          className={`rounded px-1 py-0.5 text-[10px] font-medium ${status.bg} ${status.color}`}
-                        >
-                          {status.label}
-                        </span>
                         {thesis.reviewCount > 0 && (
                           <span className="flex items-center gap-0.5">
                             <Star className="size-3 fill-current text-amber-400" />
