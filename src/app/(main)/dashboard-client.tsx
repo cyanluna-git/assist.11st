@@ -60,18 +60,18 @@ export function DashboardClient({ userName }: { userName: string }) {
       {/* Quick Actions */}
       <QuickActions />
 
-      {/* Widget Grid: 1-col mobile, 2-col tablet, 3-col desktop */}
+      {/* Row 1: 최신게시글 / 일정 / IT소식 */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Recent Posts spans full width on tablet, 2 cols on desktop */}
-        <div className="sm:col-span-2">
-          <RecentPostsWidget posts={data?.recentPosts ?? []} />
-        </div>
-
+        <RecentPostsWidget posts={data?.recentPosts ?? []} />
         <ScheduleWidget />
-        <PollWidget />
-        <GalleryWidget />
-        <ThesisWidget />
         <NewsWidget />
+      </div>
+
+      {/* Row 2: 논문 / 갤러리 / 투표 */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ThesisWidget />
+        <GalleryWidget />
+        <PollWidget />
       </div>
     </div>
   );
