@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import { newsSources } from "@/db/schema";
+import { newsSources, userNewsSubscriptions } from "@/db/schema";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -19,5 +19,17 @@ export async function GET() {
     .where(eq(newsSources.isActive, true))
     .orderBy(newsSources.name);
 
-  return NextResponse.json({ sources });
+  const subscriptions = await db
+    .select({ sourceId: userNewsSubscriptions.sourceId })
+    .from(userNewsSubscriptions)
+    .where(eq(userNewsSubscriptions.userId, session.sub));
+
+  const subscribedIds = new Set(subscriptions.map((s) => s.sourceId));
+
+  return NextResponse.json({
+    sources: sources.map((s) => ({
+      ...s,
+      isSubscribed: subscribedIds.has(s.id),
+    })),
+  });
 }

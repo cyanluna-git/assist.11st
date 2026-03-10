@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Loader2, Newspaper, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNews, useNewsSources } from "@/hooks/use-news";
 import { NewsCard } from "@/components/news/news-card";
 import { ShareNewsDialog } from "@/components/news/share-news-dialog";
+import { NewsSourcePanel } from "@/components/news/news-source-panel";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -57,6 +58,9 @@ export function NewsPageClient({ currentUserId }: NewsPageClientProps) {
         </div>
         <ShareNewsDialog />
       </div>
+
+      {/* RSS source subscription panel */}
+      <NewsSourcePanel />
 
       {/* Search */}
       <div className="relative">

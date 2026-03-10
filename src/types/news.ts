@@ -18,6 +18,7 @@ export interface NewsSource {
   id: string;
   name: string;
   category: string | null;
+  isSubscribed: boolean;
 }
 
 export interface NewsComment {

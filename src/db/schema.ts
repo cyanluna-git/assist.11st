@@ -176,6 +176,27 @@ export const newsArticles = pgTable("news_articles", {
 });
 
 // ────────────────────────────────────────────────────────
+// 6-1-s. user_news_subscriptions
+// ────────────────────────────────────────────────────────
+
+export const userNewsSubscriptions = pgTable(
+  "user_news_subscriptions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => newsSources.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique().on(t.userId, t.sourceId)],
+);
+
+// ────────────────────────────────────────────────────────
 // 6-2. news_comments
 // ────────────────────────────────────────────────────────
 

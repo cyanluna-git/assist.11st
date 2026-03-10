@@ -81,6 +81,47 @@ export function useCreateNewsComment(articleId: string) {
   });
 }
 
+// ── Toggle News Source Subscription ──
+
+export function useToggleNewsSubscription() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ sourceId, subscribed }: { sourceId: string; subscribed: boolean }) => {
+      if (subscribed) {
+        const res = await fetch(`/api/news/subscriptions?sourceId=${encodeURIComponent(sourceId)}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Failed to unsubscribe");
+        return res.json();
+      } else {
+        const res = await fetch("/api/news/subscriptions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sourceId }),
+        });
+        if (!res.ok) throw new Error("Failed to subscribe");
+        return res.json();
+      }
+    },
+    onMutate: async ({ sourceId, subscribed }) => {
+      await queryClient.cancelQueries({ queryKey: ["newsSources"] });
+      const prev = queryClient.getQueryData<import("@/types/news").NewsSource[]>(["newsSources"]);
+      queryClient.setQueryData<import("@/types/news").NewsSource[]>(["newsSources"], (old) =>
+        old?.map((s) => s.id === sourceId ? { ...s, isSubscribed: !subscribed } : s)
+      );
+      return { prev };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.prev) queryClient.setQueryData(["newsSources"], context.prev);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["newsSources"] });
+      queryClient.invalidateQueries({ queryKey: ["news"] });
+    },
+  });
+}
+
 // ── Share News (manual link) ──
 
 export function useShareNews() {
