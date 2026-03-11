@@ -21,32 +21,18 @@ const DigitalCard = forwardRef<HTMLDivElement, DigitalCardProps>(
       >
         {/* Left section */}
         <div className="flex flex-1 flex-col justify-between p-5">
-          <div className="flex items-center gap-3">
-            {profile.avatarUrl ? (
-              <img
-                src={profile.avatarUrl}
-                alt={profile.name ?? ""}
-                className="size-12 rounded-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            ) : (
-              <div className="size-12 rounded-full bg-gray-100" />
+          <div>
+            <p className="text-base font-bold text-gray-900">
+              {profile.name ?? "이름 없음"}
+            </p>
+            {profile.position && (
+              <p className="text-xs text-gray-500">{profile.position}</p>
             )}
-            <div>
-              <p className="text-base font-bold text-gray-900">
-                {profile.name ?? "이름 없음"}
+            {profile.company && (
+              <p className="text-xs font-medium text-gray-700">
+                {profile.company}
               </p>
-              {profile.position && (
-                <p className="text-xs text-gray-500">{profile.position}</p>
-              )}
-              {profile.company && (
-                <p className="text-xs font-medium text-gray-700">
-                  {profile.company}
-                </p>
-              )}
-            </div>
+            )}
           </div>
 
           <div className="space-y-1">
