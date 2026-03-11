@@ -21,7 +21,7 @@ export function ProfilesPageClient() {
           <h1 className="text-xl font-semibold text-text-strong">프로필 디렉토리</h1>
           <p className="mt-1 text-sm text-text-muted">ASSIST 11기 원우 프로필</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           <div className="w-full sm:w-72">
             <ProfileSearchBar value={search} onChange={setSearch} />
           </div>
