@@ -1,7 +1,6 @@
 "use client";
 
 import { Building2, Github, Linkedin } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useImageColor } from "@/hooks/use-image-color";
 import type { Profile } from "@/types/profile";
 
@@ -48,16 +47,31 @@ export function DirectoryCard({
       onClick={onClick}
       className="group relative flex flex-col overflow-hidden rounded-xl bg-card text-left ring-1 ring-foreground/10 transition-all duration-300 hover:ring-brand/30 hover:shadow-xl hover:shadow-brand/5"
     >
-      {/* Top gradient banner */}
-      <div
-        className="relative h-20 w-full"
-        style={{ background: `linear-gradient(135deg, ${primary}, ${dark})` }}
-      >
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }} />
-        <div className="absolute right-3 top-3 flex items-center gap-1.5">
+      {/* Full-width photo section */}
+      <div className="relative h-[190px] w-full overflow-hidden">
+        {profile.avatarUrl ? (
+          <img
+            src={profile.avatarUrl}
+            alt={profile.name}
+            className="size-full object-cover"
+          />
+        ) : (
+          <div
+            className="flex size-full items-center justify-center text-4xl font-semibold text-white"
+            style={{ background: `linear-gradient(135deg, ${primary}, ${dark})` }}
+          >
+            {getInitials(profile.name)}
+          </div>
+        )}
+        {/* Gradient overlay — photo fades into extracted color */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(to bottom, transparent 40%, ${primary} 100%)`,
+          }}
+        />
+        {/* Social icons */}
+        <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
           {profile.github && (
             <div className="rounded-full bg-white/20 p-1">
               <Github className="size-3 text-white" />
@@ -71,48 +85,17 @@ export function DirectoryCard({
         </div>
       </div>
 
-      {/* Photo */}
-      <div className="relative mx-auto -mt-10 flex w-full flex-col items-center px-5">
-        <div className="relative overflow-hidden rounded-lg ring-3 ring-card shadow-lg" style={{ width: 72, height: 90 }}>
-          {profile.avatarUrl ? (
-            <img
-              src={profile.avatarUrl}
-              alt={profile.name}
-              className="size-full object-cover"
-            />
-          ) : (
-            <div
-              className="flex size-full items-center justify-center text-2xl font-semibold text-white"
-              style={{ background: `linear-gradient(135deg, ${primary}, ${dark})` }}
-            >
-              {getInitials(profile.name)}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col items-center gap-2 px-5 pb-5 pt-3 text-center">
-        <div>
-          <h3 className="text-sm font-bold tracking-tight text-text-strong">
-            {profile.name}
-          </h3>
-          {(profile.company || profile.position) && (
-            <p className="mt-0.5 flex items-center justify-center gap-1 text-xs text-text-muted">
-              <Building2 className="size-3 shrink-0" />
-              <span className="truncate">
-                {[profile.company, profile.position]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </span>
-            </p>
-          )}
-        </div>
-
-        {profile.bio && (
-          <p className="line-clamp-2 text-xs leading-relaxed text-text-subtle">
-            {profile.bio}
+      {/* Info section */}
+      <div className="flex flex-1 flex-col gap-1.5 px-4 pb-5 pt-3">
+        <h3 className="text-sm font-bold tracking-tight text-text-strong">{profile.name}</h3>
+        {(profile.company || profile.position) && (
+          <p className="flex items-center gap-1 text-xs text-text-muted">
+            <Building2 className="size-3 shrink-0" />
+            <span className="truncate">{[profile.company, profile.position].filter(Boolean).join(" · ")}</span>
           </p>
+        )}
+        {profile.bio && (
+          <p className="line-clamp-2 text-xs leading-relaxed text-text-subtle">{profile.bio}</p>
         )}
       </div>
 
