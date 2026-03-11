@@ -26,8 +26,10 @@ const DigitalCard = forwardRef<HTMLDivElement, DigitalCardProps>(
               <img
                 src={profile.avatarUrl}
                 alt={profile.name ?? ""}
-                crossOrigin="anonymous"
                 className="size-12 rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
               />
             ) : (
               <div className="size-12 rounded-full bg-gray-100" />

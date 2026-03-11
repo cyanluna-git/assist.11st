@@ -55,14 +55,15 @@ export function DigitalCardSection({ profile }: { profile: ProfileDetail }) {
       <h3 className="text-sm font-semibold text-text-strong">디지털 명함</h3>
       <div
         ref={containerRef}
-        className="w-full overflow-hidden"
+        className="w-full overflow-hidden flex justify-center"
         style={{ height: `${CARD_HEIGHT * scale}px` }}
       >
         <div
           style={{
             transform: `scale(${scale})`,
-            transformOrigin: "top left",
+            transformOrigin: "top center",
             width: `${CARD_WIDTH}px`,
+            flexShrink: 0,
           }}
         >
           <DigitalCard ref={cardRef} profile={profile} baseUrl={baseUrl} />
