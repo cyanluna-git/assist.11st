@@ -46,12 +46,12 @@ export async function GET(
     .select({
       id: pollOptions.id,
       text: pollOptions.text,
-      voteCount: sql<number>`(
-        SELECT COUNT(*) FROM poll_votes pv WHERE pv.poll_option_id = ${pollOptions.id}
-      )`,
+      voteCount: sql<number>`COUNT(${pollVotes.id})`,
     })
     .from(pollOptions)
-    .where(eq(pollOptions.pollId, id));
+    .leftJoin(pollVotes, eq(pollVotes.pollOptionId, pollOptions.id))
+    .where(eq(pollOptions.pollId, id))
+    .groupBy(pollOptions.id, pollOptions.text);
 
   // Total unique voters
   const totalVoters = await db
