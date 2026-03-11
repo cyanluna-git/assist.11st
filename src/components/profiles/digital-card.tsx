@@ -2,10 +2,10 @@
 
 import { forwardRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import type { ProfileDetail } from "@/types/profile";
+import type { Profile } from "@/types/profile";
 
 interface DigitalCardProps {
-  profile: ProfileDetail;
+  profile: Profile;
   baseUrl: string;
 }
 

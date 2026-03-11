@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useProfiles } from "@/hooks/use-profiles";
 import { useDebounce } from "@/hooks/use-debounce";
-import { ProfileCard } from "@/components/profiles/profile-card";
+import { DigitalCardGridItem } from "@/components/profiles/digital-card-grid-item";
 import { ProfileSearchBar } from "@/components/profiles/profile-search-bar";
-import { ProfileCardSkeleton } from "@/components/profiles/profile-card-skeleton";
+import { DigitalCardSkeleton } from "@/components/profiles/digital-card-skeleton";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
@@ -37,7 +37,7 @@ export function ProfilesPageClient() {
       {isLoading && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <ProfileCardSkeleton key={i} />
+            <DigitalCardSkeleton key={i} />
           ))}
         </div>
       )}
@@ -59,7 +59,7 @@ export function ProfilesPageClient() {
       {profiles && profiles.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {profiles.map((profile) => (
-            <ProfileCard key={profile.id} profile={profile} />
+            <DigitalCardGridItem key={profile.id} profile={profile} />
           ))}
         </div>
       )}
