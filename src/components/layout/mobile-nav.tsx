@@ -9,7 +9,7 @@ const mobileItems = [
   { href: "/", label: "홈", icon: Home },
   { href: "/posts", label: "게시판", icon: MessageSquare },
   { href: "/gallery", label: "갤러리", icon: Image },
-  { href: "/profiles", label: "프로필", icon: Users },
+  { href: "/directory", label: "원우 카드", icon: Users },
   { href: "/more", label: "더보기", icon: Menu },
 ];
 

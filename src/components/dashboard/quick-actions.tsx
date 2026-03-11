@@ -6,7 +6,7 @@ import { PenSquare, MessageSquare, Users, Calendar } from "lucide-react";
 const actions = [
   { href: "/posts/write", label: "글쓰기", icon: PenSquare },
   { href: "/posts", label: "게시판", icon: MessageSquare },
-  { href: "/profiles", label: "프로필", icon: Users },
+  { href: "/directory", label: "원우 카드", icon: Users },
   { href: "/events", label: "일정", icon: Calendar },
 ];
 

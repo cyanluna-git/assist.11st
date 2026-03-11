@@ -43,7 +43,7 @@ export function ProfileDetailClient() {
   if (isError || !profile) {
     return (
       <div className="mx-auto max-w-2xl space-y-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/profiles")}>
+        <Button variant="ghost" size="sm" onClick={() => router.push("/directory")}>
           <ArrowLeft data-icon="inline-start" className="size-3.5" />
           목록으로
         </Button>
@@ -56,7 +56,7 @@ export function ProfileDetailClient() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Button variant="ghost" size="sm" onClick={() => router.push("/profiles")}>
+      <Button variant="ghost" size="sm" onClick={() => router.push("/directory")}>
         <ArrowLeft data-icon="inline-start" className="size-3.5" />
         목록으로
       </Button>
