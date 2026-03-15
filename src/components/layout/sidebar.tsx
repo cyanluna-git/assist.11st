@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   MessageSquare,
-  Users,
   ContactRound,
   Calendar,
   Image,
@@ -18,6 +17,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Users2,
+  ScrollText,
+  UtensilsCrossed,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/providers/sidebar-provider";
@@ -29,6 +30,8 @@ const navItems = [
   { href: "/directory", label: "프로필", icon: ContactRound },
   { href: "/events", label: "일정", icon: Calendar },
   { href: "/groups", label: "소모임", icon: Users2 },
+  { href: "/lunch", label: "점심 추천", icon: UtensilsCrossed },
+  { href: "/organization", label: "운영진", icon: ScrollText },
   { href: "/gallery", label: "갤러리", icon: Image },
   { href: "/thesis", label: "논문", icon: BookOpen },
   { href: "/news", label: "IT 소식", icon: Newspaper },

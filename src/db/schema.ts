@@ -1,4 +1,5 @@
 import {
+  date,
   pgTable,
   pgEnum,
   uuid,
@@ -36,6 +37,18 @@ export const rsvpStatusEnum = pgEnum("rsvp_status", [
   "attending",
   "declined",
   "maybe",
+]);
+
+export const organizationRoleKeyEnum = pgEnum("organization_role_key", [
+  "president",
+  "vice_president",
+  "women_president",
+  "treasurer",
+]);
+
+export const lunchVisitStatusEnum = pgEnum("lunch_visit_status", [
+  "visited",
+  "not_visited",
 ]);
 
 // ────────────────────────────────────────────────────────
@@ -546,4 +559,173 @@ export const invitations = pgTable("invitations", {
   useCount: integer("use_count").notNull().default(0),
   usedAt: timestamp("used_at", { withTimezone: true }),
   expiresAt: timestamp("expires_at", { withTimezone: true }),
+});
+
+// ────────────────────────────────────────────────────────
+// 22. organization_roles
+// ────────────────────────────────────────────────────────
+
+export const organizationRoles = pgTable(
+  "organization_roles",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    roleKey: organizationRoleKeyEnum("role_key").notNull(),
+    memberName: text("member_name"),
+    photoUrl: text("photo_url"),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("organization_roles_role_key_unique").on(t.roleKey)],
+);
+
+// ────────────────────────────────────────────────────────
+// 23. bylaw_versions
+// ────────────────────────────────────────────────────────
+
+export const bylawVersions = pgTable(
+  "bylaw_versions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    version: text("version").notNull(),
+    content: text("content").notNull(),
+    createdBy: uuid("created_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("bylaw_versions_version_unique").on(t.version)],
+);
+
+// ────────────────────────────────────────────────────────
+// 24. lunch_visit_states
+// ────────────────────────────────────────────────────────
+
+export const lunchVisitStates = pgTable(
+  "lunch_visit_states",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kakaoPlaceId: text("kakao_place_id").notNull(),
+    status: lunchVisitStatusEnum("status").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("lunch_visit_states_user_place_unique").on(t.userId, t.kakaoPlaceId)],
+);
+
+// ────────────────────────────────────────────────────────
+// 25. lunch_visit_events
+// ────────────────────────────────────────────────────────
+
+export const lunchVisitEvents = pgTable(
+  "lunch_visit_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kakaoPlaceId: text("kakao_place_id").notNull(),
+    visitDate: date("visit_date").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    unique("lunch_visit_events_user_place_date_unique").on(
+      t.userId,
+      t.kakaoPlaceId,
+      t.visitDate,
+    ),
+  ],
+);
+
+// ────────────────────────────────────────────────────────
+// 26. lunch_reviews
+// ────────────────────────────────────────────────────────
+
+export const lunchReviews = pgTable(
+  "lunch_reviews",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kakaoPlaceId: text("kakao_place_id").notNull(),
+    rating: integer("rating").notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("lunch_reviews_user_place_unique").on(t.userId, t.kakaoPlaceId)],
+);
+
+// ────────────────────────────────────────────────────────
+// 27. lunch_review_photos
+// ────────────────────────────────────────────────────────
+
+export const lunchReviewPhotos = pgTable("lunch_review_photos", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reviewId: uuid("review_id")
+    .notNull()
+    .references(() => lunchReviews.id, { onDelete: "cascade" }),
+  imageUrl: text("image_url").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ────────────────────────────────────────────────────────
+// 28. lunch_place_exclusions
+// ────────────────────────────────────────────────────────
+
+export const lunchPlaceExclusions = pgTable(
+  "lunch_place_exclusions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    kakaoPlaceId: text("kakao_place_id").notNull(),
+    placeName: text("place_name").notNull(),
+    categoryName: text("category_name"),
+    roadAddressName: text("road_address_name"),
+    addressName: text("address_name"),
+    addedBy: uuid("added_by")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("lunch_place_exclusions_kakao_place_unique").on(t.kakaoPlaceId)],
+);
+
+// ────────────────────────────────────────────────────────
+// 29. lunch_recommendation_history
+// ────────────────────────────────────────────────────────
+
+export const lunchRecommendationHistory = pgTable("lunch_recommendation_history", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  kakaoPlaceId: text("kakao_place_id").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });

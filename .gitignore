@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# claude agent worktrees
+.claude/worktrees/
+
+# personal data
+*.vcf
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

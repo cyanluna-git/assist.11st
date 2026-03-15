@@ -9,14 +9,16 @@ import { GalleryWidget } from "@/components/dashboard/gallery-widget";
 import { NewsWidget } from "@/components/dashboard/news-widget";
 import { ThesisWidget } from "@/components/dashboard/thesis-widget";
 import { QuickActions } from "@/components/dashboard/quick-actions";
+import { LunchWidget } from "@/components/dashboard/lunch-widget";
 import { Skeleton } from "@/components/ui/skeleton";
+import { isSaturdayInSeoul } from "@/lib/seoul-date";
 
 function DashboardSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-[58px] w-full" />
-      <div className="grid grid-cols-4 gap-2 sm:gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
+        {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-[72px]" />
         ))}
       </div>
@@ -31,6 +33,7 @@ function DashboardSkeleton() {
 
 export function DashboardClient({ userName }: { userName: string }) {
   const { data, isLoading, isError } = useDashboardData();
+  const showLunchWidget = isSaturdayInSeoul();
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -59,6 +62,9 @@ export function DashboardClient({ userName }: { userName: string }) {
 
       {/* Quick Actions */}
       <QuickActions />
+
+      {/* Lunch */}
+      {showLunchWidget && <LunchWidget />}
 
       {/* Row 1: 최신게시글 / 일정 / IT소식 */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

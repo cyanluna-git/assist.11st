@@ -1,5 +1,5 @@
-// ASSIST 11기 Service Worker v2
-const CACHE_NAME = "assist-11th-v2";
+// ASSIST 11기 Service Worker v3
+const CACHE_NAME = "assist-11th-v3";
 const OFFLINE_URL = "/offline.html";
 
 const PRECACHE = [

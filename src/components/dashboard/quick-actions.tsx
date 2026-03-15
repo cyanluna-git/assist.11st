@@ -1,18 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { PenSquare, MessageSquare, Users, Calendar } from "lucide-react";
+import {
+  PenSquare,
+  MessageSquare,
+  Users,
+  Calendar,
+  ScrollText,
+  UtensilsCrossed,
+} from "lucide-react";
 
 const actions = [
   { href: "/posts/write", label: "글쓰기", icon: PenSquare },
   { href: "/posts", label: "게시판", icon: MessageSquare },
   { href: "/directory", label: "원우 카드", icon: Users },
   { href: "/events", label: "일정", icon: Calendar },
+  { href: "/lunch", label: "점심 추천", icon: UtensilsCrossed },
+  { href: "/organization", label: "운영진", icon: ScrollText },
 ];
 
 export function QuickActions() {
   return (
-    <div className="grid grid-cols-4 gap-2 sm:gap-3">
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
       {actions.map(({ href, label, icon: Icon }) => (
         <Link
           key={href}

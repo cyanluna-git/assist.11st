@@ -25,9 +25,11 @@ export default async function MainLayout({
 
   const profile = await db
     .select({
+      name: users.name,
       company: users.company,
       position: users.position,
       bio: users.bio,
+      avatarUrl: users.avatarUrl,
     })
     .from(users)
     .where(eq(users.id, session.sub))
@@ -43,7 +45,15 @@ export default async function MainLayout({
         <div className="flex min-h-dvh bg-canvas">
           <Sidebar />
           <MainContent>
-            <Header user={{ id: session.sub, name: session.name, email: session.email, role: session.role }} />
+            <Header
+              user={{
+                id: session.sub,
+                name: profile?.name ?? session.name,
+                email: session.email,
+                role: session.role,
+                avatarUrl: profile?.avatarUrl ?? null,
+              }}
+            />
             <main className="flex-1 px-4 py-4.5 pb-20 sm:px-6 sm:py-7 md:pb-7 lg:px-10 lg:py-8.5">
               {children}
             </main>

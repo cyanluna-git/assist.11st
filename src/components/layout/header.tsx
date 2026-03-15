@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 
 interface HeaderProps {
-  user: { id: string; name: string; email: string; role: string };
+  user: { id: string; name: string; email: string; role: string; avatarUrl?: string | null };
 }
 
 export function Header({ user }: HeaderProps) {
@@ -30,13 +31,13 @@ export function Header({ user }: HeaderProps) {
         <NotificationBell />
         <Link
           href={`/profiles/${user.id}`}
-          className="hidden items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-canvas sm:flex"
+          className="flex max-w-[9.5rem] items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-canvas sm:max-w-none"
           title="내 프로필 편집"
         >
-          <User className="size-4 text-text-muted" />
-          <span className="text-sm text-text-main">{user.name}</span>
+          <Avatar src={user.avatarUrl} name={user.name} size="sm" />
+          <span className="truncate text-sm text-text-main">{user.name}</span>
           {user.role === "admin" && (
-            <span className="rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+            <span className="hidden rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand sm:inline-flex">
               Admin
             </span>
           )}

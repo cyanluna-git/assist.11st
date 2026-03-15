@@ -6,6 +6,8 @@ import { asc } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
+const COHORT_LABEL = "aSSiST AI전략경영 11기";
+
 function cleanPhone(phone: string | null): string {
   if (!phone) return "";
   const digits = phone.replace(/\D/g, "");
@@ -85,18 +87,18 @@ async function toVcard(user: {
   }
 
   // Embed photo as base64 if available
-  if (user.avatarUrl?.startsWith("http")) {
+  if (user.avatarUrl?.startsWith("https://")) {
     const photo = await fetchPhotoBase64(user.avatarUrl);
     if (photo) {
       lines.push(foldLine(`PHOTO;ENCODING=b;TYPE=${photo.type}:${photo.data}`));
     }
   }
 
-  lines.push("NOTE:aSSiST AI전략경영 11기");
-  lines.push("CATEGORIES:aSSiST AI전략경영 11기");
+  lines.push(`NOTE:${COHORT_LABEL}`);
+  lines.push(`CATEGORIES:${COHORT_LABEL}`);
   lines.push("END:VCARD");
 
-  return lines.join("\r\n");
+  return lines.map(foldLine).join("\r\n");
 }
 
 export async function GET() {
@@ -118,15 +120,19 @@ export async function GET() {
     .from(users)
     .orderBy(asc(users.name));
 
-  // Fetch photos in parallel
-  const vcards = await Promise.all(members.map(toVcard));
-  const vcfContent = vcards.join("\r\n");
+  // Fetch photos in parallel — allSettled so one failure doesn't break the whole export
+  const results = await Promise.allSettled(members.map(toVcard));
+  const vcards = results
+    .filter((r): r is PromiseFulfilledResult<string> => r.status === "fulfilled")
+    .map((r) => r.value);
+  const vcfContent = vcards.join("\r\n") + "\r\n";
 
   return new NextResponse(vcfContent, {
     status: 200,
     headers: {
       "Content-Type": "text/vcard; charset=utf-8",
       "Content-Disposition": `attachment; filename="assist11th-contacts.vcf"`,
+      "Cache-Control": "private, max-age=3600",
     },
   });
 }

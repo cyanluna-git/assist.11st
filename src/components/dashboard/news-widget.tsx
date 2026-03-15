@@ -12,9 +12,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useNews } from "@/hooks/use-news";
 import { formatDate } from "@/lib/format-date";
+import { pickDashboardNewsArticles } from "@/lib/news";
 
 export function NewsWidget() {
-  const { data: articles, isLoading } = useNews(3);
+  const { data: articles, isLoading } = useNews(12);
+  const widgetArticles = articles ? pickDashboardNewsArticles(articles, 3) : [];
 
   return (
     <Card>
@@ -37,16 +39,16 @@ export function NewsWidget() {
           </div>
         )}
 
-        {!isLoading && (!articles || articles.length === 0) && (
+        {!isLoading && (!articles || widgetArticles.length === 0) && (
           <div className="flex flex-col items-center gap-2 py-6 text-text-muted">
             <Newspaper className="size-8 opacity-40" />
             <p className="text-sm">등록된 소식이 없습니다</p>
           </div>
         )}
 
-        {!isLoading && articles && articles.length > 0 && (
+        {!isLoading && articles && widgetArticles.length > 0 && (
           <div className="space-y-3">
-            {articles.map((article) => (
+            {widgetArticles.map((article) => (
               <a
                 key={article.id}
                 href={article.url}

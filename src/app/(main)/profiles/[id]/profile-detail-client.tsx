@@ -14,6 +14,7 @@ export function ProfileDetailClient() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const [flashMessage, setFlashMessage] = useState<string | null>(null);
 
   const { data: profile, isLoading, isError } = useProfile(id);
   const { data: currentUser } = useCurrentUser();
@@ -61,18 +62,30 @@ export function ProfileDetailClient() {
         목록으로
       </Button>
 
+      {flashMessage && (
+        <div className="rounded-xl border border-success/20 bg-success/5 px-4 py-3 text-sm text-success">
+          {flashMessage}
+        </div>
+      )}
+
       <div className="rounded-xl bg-card p-6 ring-1 ring-foreground/10">
         {isEditing ? (
           <ProfileEditForm
             profile={profile}
             onCancel={() => setIsEditing(false)}
-            onSaved={() => setIsEditing(false)}
+            onSaved={(message) => {
+              setIsEditing(false);
+              setFlashMessage(message ?? "프로필이 저장되었습니다.");
+            }}
           />
         ) : (
           <ProfileDetailView
             profile={profile}
             isOwner={isOwner}
-            onEdit={() => setIsEditing(true)}
+            onEdit={() => {
+              setFlashMessage(null);
+              setIsEditing(true);
+            }}
           />
         )}
       </div>
